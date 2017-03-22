@@ -5,6 +5,9 @@
 
 The plugin provides a task to generate TeamCity settings in XML format from a Kotlin DSL.
 
+image:https://travis-ci.org/rodm/gradle-teamcity-dsl-plugin.svg?branch=master["Build Status", link="https://travis-ci.org/rodm/gradle-teamcity-dsl-plugin"]
+image:https://ci.appveyor.com/api/projects/status/github/rodm/gradle-teamcity-dsl-plugin?branch=master&svg=true["Build Status", link="https://ci.appveyor.com/project/rodm/gradle-teamcity-dsl-plugin"]
+
 ## Using the plugin
 
 The plugin is published on the {uri-gradle-plugin-portal}[Gradle Plugin Portal] and can be applied to a build
