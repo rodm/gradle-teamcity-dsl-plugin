@@ -1,0 +1,38 @@
+= Gradle TeamCity DSL plugin
+:uri-teamcity-documentation: https://confluence.jetbrains.com/display/TCD10
+:uri-gradle-plugin-portal: https://plugins.gradle.org/plugin/com.github.rodm.teamcity-dsl
+:plugin-version: 0.1
+
+The plugin provides a task to generate TeamCity settings in XML format from a Kotlin DSL.
+
+## Using the plugin
+
+The plugin is published on the {uri-gradle-plugin-portal}[Gradle Plugin Portal] and can be applied to a build
+as follows.
+
+[source,groovy]
+[subs="attributes"]
+----
+    buildscript {
+      repositories {
+        maven {
+          url "https://plugins.gradle.org/m2/"
+        }
+      }
+      dependencies {
+        classpath "com.github.rodm:gradle-teamcity-dsl-plugin:{plugin-version}"
+      }
+    }
+----
+
+### Extension Properties
+
+The following properties are defined in the `teamcityConfig` configuration block.
+
+* `format` : The format of the DSL, currently only *kotlin* is supported.
+* `baseDir` : The directory containing the Kotlin DSL projects and files. Defaults to '.teamcity'.
+* `destDir` : The directory the settings in XML format are written to. Defaults to '${buildDir}/generated-configs'.
+
+### Tasks
+
+* `generateConfiguration` : Runs the generator to create the TeamCity settings.

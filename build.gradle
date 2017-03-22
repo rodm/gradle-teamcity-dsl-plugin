@@ -1,0 +1,61 @@
+
+plugins {
+    id 'java'
+    id 'java-gradle-plugin'
+    id 'maven-publish'
+    id 'com.gradle.plugin-publish' version '0.9.7'
+}
+
+version = '0.1-SNAPSHOT'
+group = 'com.github.rodm'
+
+repositories {
+    mavenCentral()
+    maven {
+        url = 'http://download.jetbrains.com/teamcity-repository'
+    }
+}
+
+dependencies {
+    compile('org.jetbrains.teamcity:configs-dsl-server:10.0.0') {
+        exclude module: 'groovy-all'
+    }
+    compile 'org.jetbrains.teamcity.internal:server:10.0'
+    runtime 'org.jetbrains.kotlin:kotlin-compiler-embeddable:1.0.3'
+}
+
+compileJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+}
+
+publishing {
+    repositories {
+        mavenLocal()
+    }
+
+    publications {
+        plugin(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+pluginBundle {
+    website = 'https://github.com/rodm/gradle-teamcity-dsl-plugin'
+    vcsUrl = 'https://github.com/rodm/gradle-teamcity-dsl-plugin'
+    description = 'Gradle plugin for generating TeamCity settings from a Kotlin DSL'
+    tags = ['teamcity', 'dsl', 'kotlin']
+
+    plugins {
+        plugin {
+            id = 'com.github.rodm.teamcity-dsl'
+            displayName = 'Gradle TeamCity DSL plugin'
+        }
+    }
+
+    mavenCoordinates {
+        groupId = project.group
+        artifactId = project.name
+    }
+}
