@@ -32,6 +32,7 @@ as follows.
 
 The following properties are defined in the `teamcityConfig` configuration block.
 
+* `teamcityVersion` : The version of the TeamCity DSL libraries to use. Defaults to '10.0.5'.
 * `format` : The format of the DSL, currently only *kotlin* is supported.
 * `baseDir` : The directory containing the Kotlin DSL projects and files. Defaults to '.teamcity'.
 * `destDir` : The directory the settings in XML format are written to. Defaults to '${buildDir}/generated-configs'.
