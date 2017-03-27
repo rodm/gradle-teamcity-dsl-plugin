@@ -1,6 +1,7 @@
 
 plugins {
     id 'java'
+    id 'groovy'
     id 'java-gradle-plugin'
     id 'maven-publish'
     id 'com.gradle.plugin-publish' version '0.9.7'
@@ -22,6 +23,8 @@ dependencies {
     }
     compile 'org.jetbrains.teamcity.internal:server:10.0'
     runtime 'org.jetbrains.kotlin:kotlin-compiler-embeddable:1.0.3'
+
+    testCompile 'junit:junit:4.12'
 }
 
 compileJava {
