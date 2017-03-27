@@ -20,11 +20,21 @@ import java.io.File;
 
 public class TeamCityDSLExtension {
 
+    private String teamcityVersion;
+
     private String format;
 
     private File baseDir;
 
     private File destDir;
+
+    public String getTeamcityVersion() {
+        return teamcityVersion;
+    }
+
+    public void setTeamcityVersion(String teamcityVersion) {
+        this.teamcityVersion = teamcityVersion;
+    }
 
     public String getFormat() {
         return format;

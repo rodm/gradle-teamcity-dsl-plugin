@@ -34,13 +34,14 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
     public final void apply(Project project) {
         TeamCityDSLExtension extension = createExtension(project);
         Configuration configuration = createConfiguration(project);
-        configureDefaultDependencies(project, configuration);
+        configureDefaultDependencies(project, configuration, extension);
         configureTask(project, extension);
     }
 
     @NotNull
     private TeamCityDSLExtension createExtension(Project project) {
         TeamCityDSLExtension extension = project.getExtensions().create("teamcityConfig", TeamCityDSLExtension.class);
+        extension.setTeamcityVersion("10.0.5");
         extension.setFormat("kotlin");
         extension.setBaseDir(new File(project.getRootDir(), ".teamcity"));
         extension.setDestDir(new File(project.getBuildDir(), "generated-configs"));
@@ -51,17 +52,18 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
         return project.getConfigurations().create("teamcity");
     }
 
-    private void configureDefaultDependencies(Project project, Configuration configuration) {
+    private void configureDefaultDependencies(Project project, Configuration configuration, TeamCityDSLExtension extension) {
         configuration.defaultDependencies(new Action<DependencySet>() {
             @Override
             public void execute(DependencySet dependencies) {
                 DependencyHandler handler = project.getDependencies();
                 dependencies.add(handler.create("org.jetbrains.kotlin:kotlin-stdlib:1.0.3"));
                 dependencies.add(handler.create("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.0.3"));
-                dependencies.add(handler.create("org.jetbrains.teamcity:server-api:10.0.5"));
-                dependencies.add(handler.create("org.jetbrains.teamcity.internal:server:10.0.5"));
-                dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-server:10.0.5"));
-                dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin:10.0.5"));
+                String teamcityVersion = extension.getTeamcityVersion();
+                dependencies.add(handler.create("org.jetbrains.teamcity:server-api:" + teamcityVersion));
+                dependencies.add(handler.create("org.jetbrains.teamcity.internal:server:" + teamcityVersion));
+                dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-server:" + teamcityVersion));
+                dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin:" + teamcityVersion));
 
                 //    compile 'org.jetbrains.teamcity:configs-dsl-kotlin-plugins:1.0-SNAPSHOT:pom'
                 dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-ant:1.0-SNAPSHOT"));
