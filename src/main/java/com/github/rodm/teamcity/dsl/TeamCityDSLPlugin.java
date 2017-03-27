@@ -23,6 +23,7 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.DependencySet;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.internal.ConventionMapping;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.concurrent.Callable;
@@ -31,15 +32,26 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
 
     @Override
     public final void apply(Project project) {
+        TeamCityDSLExtension extension = createExtension(project);
+        Configuration configuration = createConfiguration(project);
+        configureDefaultDependencies(project, configuration);
+        configureTask(project, extension);
+    }
+
+    @NotNull
+    private TeamCityDSLExtension createExtension(Project project) {
         TeamCityDSLExtension extension = project.getExtensions().create("teamcityConfig", TeamCityDSLExtension.class);
         extension.setFormat("kotlin");
         extension.setBaseDir(new File(project.getRootDir(), ".teamcity"));
         extension.setDestDir(new File(project.getBuildDir(), "generated-configs"));
+        return extension;
+    }
 
-        // create configuration
-        Configuration configuration = project.getConfigurations().create("teamcity");
+    private Configuration createConfiguration(Project project) {
+        return project.getConfigurations().create("teamcity");
+    }
 
-        // add default deps
+    private void configureDefaultDependencies(Project project, Configuration configuration) {
         configuration.defaultDependencies(new Action<DependencySet>() {
             @Override
             public void execute(DependencySet dependencies) {
@@ -74,8 +86,9 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
                 dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-visualstudiotest:1.0-SNAPSHOT"));
             }
         });
+    }
 
-        // config task
+    private void configureTask(Project project, TeamCityDSLExtension extension) {
         GenerateConfigurationTask task = project.getTasks().create("generateConfiguration", GenerateConfigurationTask.class);
         ConventionMapping taskMapping = task.getConventionMapping();
         taskMapping.map("format", new Callable<String>() {
