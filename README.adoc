@@ -39,3 +39,6 @@ The following properties are defined in the `teamcityConfig` configuration block
 ### Tasks
 
 * `generateConfiguration` : Runs the generator to create the TeamCity settings.
+
+If the TeamCity settings contain an error or invalid configuration the task will output an exception, and a list of
+the problems will be output to the file `dsl_exception.xml` in the directory `destDir`.
