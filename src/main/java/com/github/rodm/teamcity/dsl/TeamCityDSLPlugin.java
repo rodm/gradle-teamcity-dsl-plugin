@@ -52,7 +52,6 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
                 dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin:10.0.5"));
 
                 //    compile 'org.jetbrains.teamcity:configs-dsl-kotlin-plugins:1.0-SNAPSHOT:pom'
-                dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin:10.0.5"));
                 dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-ant:1.0-SNAPSHOT"));
                 dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-bugzilla:1.0-SNAPSHOT"));
                 dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-bundled:1.0-SNAPSHOT"));
