@@ -16,6 +16,7 @@
 
 package com.github.rodm.teamcity.dsl;
 
+import com.google.common.collect.Lists;
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -23,6 +24,9 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.DependencySet;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.internal.ConventionMapping;
+import org.gradle.api.plugins.JavaPlugin;
+import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.tasks.SourceSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -30,10 +34,16 @@ import java.util.concurrent.Callable;
 
 public class TeamCityDSLPlugin implements Plugin<Project> {
 
+    private static final String CONFIGURATION_NAME = "teamcity";
+    private static final String SOURCE_SET_NAME = "teamcity";
+
     @Override
     public final void apply(Project project) {
+        project.getPluginManager().apply(JavaPlugin.class);
+
         TeamCityDSLExtension extension = createExtension(project);
         Configuration configuration = createConfiguration(project);
+        configureSourceSet(project, configuration, extension);
         configureDefaultDependencies(project, configuration, extension);
         configureTask(project, extension);
     }
@@ -49,7 +59,23 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
     }
 
     private Configuration createConfiguration(Project project) {
-        return project.getConfigurations().create("teamcity");
+        return project.getConfigurations().create(CONFIGURATION_NAME);
+    }
+
+    private void configureSourceSet(Project project, Configuration configuration, TeamCityDSLExtension extension) {
+        JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
+        SourceSet sourceSet = javaConvention.getSourceSets().create(SOURCE_SET_NAME, new Action<SourceSet>() {
+            @Override
+            public void execute(SourceSet sourceSet) {
+                sourceSet.getJava().setSrcDirs(Lists.newArrayList(new Callable<File>() {
+                    @Override
+                    public File call() throws Exception {
+                        return extension.getBaseDir();
+                    }
+                }));
+            }
+        });
+        sourceSet.setCompileClasspath(configuration);
     }
 
     private void configureDefaultDependencies(Project project, Configuration configuration, TeamCityDSLExtension extension) {

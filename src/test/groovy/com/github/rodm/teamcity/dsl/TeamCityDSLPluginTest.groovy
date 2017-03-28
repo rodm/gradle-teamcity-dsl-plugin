@@ -17,6 +17,7 @@
 package com.github.rodm.teamcity.dsl
 
 import org.gradle.api.Project
+import org.gradle.api.tasks.SourceSet
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Rule
@@ -24,6 +25,7 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
 import static org.hamcrest.Matchers.endsWith
+import static org.hamcrest.Matchers.hasSize
 import static org.hamcrest.Matchers.is
 import static org.junit.Assert.assertNotNull
 import static org.junit.Assert.assertThat
@@ -62,6 +64,37 @@ class TeamCityDSLPluginTest {
 
         def task = project.tasks.findByName('generateConfiguration')
         assertNotNull(task)
+    }
+
+    @Test
+    void 'applying plugin adds a source set'() {
+        project.apply plugin: 'com.github.rodm.teamcity-dsl'
+
+        SourceSet sourceSet = project.sourceSets.findByName('teamcity')
+        assertNotNull(sourceSet)
+    }
+
+    @Test
+    void 'applying plugin sets source set directory to .teamcity'() {
+        project.apply plugin: 'com.github.rodm.teamcity-dsl'
+
+        SourceSet sourceSet = project.sourceSets.getByName('teamcity')
+        def srcDirs = sourceSet.getJava().getSrcDirs();
+        assertThat(srcDirs, hasSize(1))
+        assertThat(normalizePath(srcDirs.getAt(0)), endsWith('/.teamcity'))
+    }
+
+    @Test
+    void 'configuration sets source set with alternative directory'() {
+        project.apply plugin: 'com.github.rodm.teamcity-dsl'
+        project.teamcityConfig {
+            baseDir = project.file('src/test/teamcity')
+        }
+
+        SourceSet sourceSet = project.sourceSets.getByName('teamcity')
+        def srcDirs = sourceSet.getJava().getSrcDirs();
+        assertThat(srcDirs, hasSize(1))
+        assertThat(normalizePath(srcDirs.getAt(0)), endsWith('/src/test/teamcity'))
     }
 
     @Test
