@@ -23,6 +23,8 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.DependencySet;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
+import org.gradle.api.artifacts.dsl.RepositoryHandler;
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.internal.ConventionMapping;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
@@ -37,12 +39,15 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
     private static final String CONFIGURATION_NAME = "teamcity";
     private static final String SOURCE_SET_NAME = "teamcity";
 
+    private static final String JETBRAINS_MAVEN_REPOSITORY = "https://download.jetbrains.com/teamcity-repository";
+
     @Override
     public final void apply(Project project) {
         project.getPluginManager().apply(JavaPlugin.class);
 
         TeamCityDSLExtension extension = createExtension(project);
         Configuration configuration = createConfiguration(project);
+        configureRepositories(project);
         configureSourceSet(project, configuration, extension);
         configureDefaultDependencies(project, configuration, extension);
         configureTask(project, extension);
@@ -60,6 +65,17 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
 
     private Configuration createConfiguration(Project project) {
         return project.getConfigurations().create(CONFIGURATION_NAME);
+    }
+
+    private void configureRepositories(Project project) {
+        RepositoryHandler handler = project.getRepositories();
+        handler.mavenCentral();
+        handler.maven(new Action<MavenArtifactRepository>() {
+            @Override
+            public void execute(MavenArtifactRepository repository) {
+                repository.setUrl(JETBRAINS_MAVEN_REPOSITORY);
+            }
+        });
     }
 
     private void configureSourceSet(Project project, Configuration configuration, TeamCityDSLExtension extension) {

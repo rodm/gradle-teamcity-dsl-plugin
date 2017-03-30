@@ -24,6 +24,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
+import static org.hamcrest.CoreMatchers.hasItem
 import static org.hamcrest.Matchers.endsWith
 import static org.hamcrest.Matchers.hasSize
 import static org.hamcrest.Matchers.is
@@ -118,6 +119,15 @@ class TeamCityDSLPluginTest {
         GenerateConfigurationTask task = project.tasks.findByName('generateConfiguration') as GenerateConfigurationTask
         assertThat(normalizePath(task.baseDir), endsWith('/src/test/teamcity'))
         assertThat(normalizePath(task.destDir), endsWith('/data/10.0/config/projects'))
+    }
+
+    @Test
+    void 'configures MavenCentral and JetBrains repositories'() {
+        project.apply plugin: 'com.github.rodm.teamcity-dsl'
+
+        List<String> urls = project.repositories.collect { repository -> repository.url.toString() }
+        assertThat(urls, hasItem('https://repo1.maven.org/maven2/'))
+        assertThat(urls, hasItem('https://download.jetbrains.com/teamcity-repository'))
     }
 
     private static String normalizePath(File path) {
