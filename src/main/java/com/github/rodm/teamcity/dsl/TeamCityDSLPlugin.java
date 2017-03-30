@@ -16,7 +16,6 @@
 
 package com.github.rodm.teamcity.dsl;
 
-import com.google.common.collect.Lists;
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -32,6 +31,7 @@ import org.gradle.api.tasks.SourceSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.concurrent.Callable;
 
 public class TeamCityDSLPlugin implements Plugin<Project> {
@@ -83,7 +83,7 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
         SourceSet sourceSet = javaConvention.getSourceSets().create(SOURCE_SET_NAME, new Action<SourceSet>() {
             @Override
             public void execute(SourceSet sourceSet) {
-                sourceSet.getJava().setSrcDirs(Lists.newArrayList(new Callable<File>() {
+                sourceSet.getJava().setSrcDirs(Collections.singletonList(new Callable<File>() {
                     @Override
                     public File call() throws Exception {
                         return extension.getBaseDir();

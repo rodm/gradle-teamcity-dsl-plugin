@@ -20,11 +20,10 @@ repositories {
 }
 
 dependencies {
-    compile('org.jetbrains.teamcity:configs-dsl-server:10.0.0') {
+    compileOnly('org.jetbrains.teamcity:configs-dsl-server:10.0.0') {
         exclude module: 'groovy-all'
     }
-    compile 'org.jetbrains.teamcity.internal:server:10.0'
-    runtime 'org.jetbrains.kotlin:kotlin-compiler-embeddable:1.0.3'
+    compileOnly 'org.jetbrains.teamcity.internal:server:10.0'
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest-library:1.3'
