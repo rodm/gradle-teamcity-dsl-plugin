@@ -80,9 +80,9 @@ class TeamCityDSLPluginTest {
         project.apply plugin: 'com.github.rodm.teamcity-dsl'
 
         SourceSet sourceSet = project.sourceSets.getByName('teamcity')
-        def srcDirs = sourceSet.getJava().getSrcDirs();
+        def srcDirs = sourceSet.getJava().getSrcDirs()
         assertThat(srcDirs, hasSize(1))
-        assertThat(normalizePath(srcDirs.getAt(0)), endsWith('/.teamcity'))
+        assertThat(normalizePath(srcDirs[0]), endsWith('/.teamcity'))
     }
 
     @Test
@@ -93,9 +93,9 @@ class TeamCityDSLPluginTest {
         }
 
         SourceSet sourceSet = project.sourceSets.getByName('teamcity')
-        def srcDirs = sourceSet.getJava().getSrcDirs();
+        def srcDirs = sourceSet.getJava().getSrcDirs()
         assertThat(srcDirs, hasSize(1))
-        assertThat(normalizePath(srcDirs.getAt(0)), endsWith('/src/test/teamcity'))
+        assertThat(normalizePath(srcDirs[0]), endsWith('/src/test/teamcity'))
     }
 
     @Test
