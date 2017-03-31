@@ -24,20 +24,7 @@ ext {
 }
 
 repositories {
-    mavenLocal()
-    maven {
-        url = 'http://download.jetbrains.com/teamcity-repository'
-    }
     maven {
         url "http://${teamcityServer}:8111/app/dsl-plugins-repository"
-    }
-}
-
-sourceSets {
-    teamcity {
-        compileClasspath = configurations.teamcity
-        java {
-            srcDirs = ['.teamcity']
-        }
     }
 }
