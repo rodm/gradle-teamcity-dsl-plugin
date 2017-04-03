@@ -33,6 +33,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.github.rodm.teamcity.dsl.TeamCityDSLPlugin.CONFIGURATION_NAME;
+
 public class GenerateConfigurationTask extends DefaultTask implements IConventionAware {
 
     private ConventionMapping conventionMapping = new ConventionAwareHelper(this, this.getProject().getConvention());
@@ -56,7 +58,7 @@ public class GenerateConfigurationTask extends DefaultTask implements IConventio
         getProject().javaexec(new Action<JavaExecSpec>() {
             @Override
             public void execute(JavaExecSpec spec) {
-                Configuration configuration = getProject().getConfigurations().getAt("teamcity");
+                Configuration configuration = getProject().getConfigurations().getAt(CONFIGURATION_NAME);
                 String toolPath = configuration.getAsPath();
                 spec.setClasspath(createToolClasspath(configuration));
                 spec.setMain("com.github.rodm.teamcity.dsl.internal.GenerateConfigurationMain");

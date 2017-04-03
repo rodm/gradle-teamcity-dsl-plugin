@@ -36,8 +36,15 @@ import java.util.concurrent.Callable;
 
 public class TeamCityDSLPlugin implements Plugin<Project> {
 
-    private static final String CONFIGURATION_NAME = "teamcity";
+    static final String CONFIGURATION_NAME = "teamcity";
+
+    private static final String EXTENSION_NAME = "teamcityConfig";
     private static final String SOURCE_SET_NAME = "teamcity";
+
+    private static final String DEFAULT_TEAMCITY_VERSION = "10.0.5";
+    private static final String DEFAULT_FORMAT = "kotlin";
+    private static final String DEFAULT_BASE_DIR = ".teamcity";
+    private static final String DEFAULT_DEST_DIR = "generated-configs";
 
     private static final String JETBRAINS_MAVEN_REPOSITORY = "https://download.jetbrains.com/teamcity-repository";
 
@@ -55,11 +62,11 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
 
     @NotNull
     private TeamCityDSLExtension createExtension(Project project) {
-        TeamCityDSLExtension extension = project.getExtensions().create("teamcityConfig", TeamCityDSLExtension.class);
-        extension.setTeamcityVersion("10.0.5");
-        extension.setFormat("kotlin");
-        extension.setBaseDir(new File(project.getRootDir(), ".teamcity"));
-        extension.setDestDir(new File(project.getBuildDir(), "generated-configs"));
+        TeamCityDSLExtension extension = project.getExtensions().create(EXTENSION_NAME, TeamCityDSLExtension.class);
+        extension.setTeamcityVersion(DEFAULT_TEAMCITY_VERSION);
+        extension.setFormat(DEFAULT_FORMAT);
+        extension.setBaseDir(new File(project.getRootDir(), DEFAULT_BASE_DIR));
+        extension.setDestDir(new File(project.getBuildDir(), DEFAULT_DEST_DIR));
         return extension;
     }
 
