@@ -34,6 +34,33 @@ compileJava {
     targetCompatibility = 1.8
 }
 
+sourceSets {
+    functionalTest {
+        compileClasspath += main.output + configurations.testRuntime
+        runtimeClasspath += main.output + configurations.testRuntime
+        groovy {
+            srcDir 'src/functional/groovy'
+        }
+    }
+}
+
+gradlePlugin {
+    testSourceSets sourceSets.functionalTest
+}
+
+task functionalTest(type: Test) {
+    description = 'Runs the functional tests.'
+    group = 'verification'
+    testClassesDir = sourceSets.functionalTest.output.classesDir
+    classpath = sourceSets.functionalTest.runtimeClasspath
+    systemProperty 'teamcity.server.host', project.findProperty('teamcity.server.host') ?: 'localhost'
+
+    reports {
+        html.destination = project.file("$html.destination/functional")
+        junitXml.destination = project.file("$junitXml.destination/functional")
+    }
+}
+
 publishing {
     repositories {
         mavenLocal()
