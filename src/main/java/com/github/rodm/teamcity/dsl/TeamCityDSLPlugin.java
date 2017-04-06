@@ -19,6 +19,7 @@ package com.github.rodm.teamcity.dsl;
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
@@ -43,6 +44,8 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
     private static final String DEFAULT_FORMAT = "kotlin";
     private static final String DEFAULT_BASE_DIR = ".teamcity";
     private static final String DEFAULT_DEST_DIR = "generated-configs";
+
+    private static final String DSL_EXCEPTION_FILENAME = "dsl_exception.xml";
 
     private static final String JETBRAINS_MAVEN_REPOSITORY = "https://download.jetbrains.com/teamcity-repository";
 
@@ -135,5 +138,11 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
         taskMapping.map("format", extension::getFormat);
         taskMapping.map("baseDir", extension::getBaseDir);
         taskMapping.map("destDir", extension::getDestDir);
+        task.doFirst(new Action<Task>() {
+            @Override
+            public void execute(Task task) {
+                project.delete(new File(extension.getDestDir(), DSL_EXCEPTION_FILENAME));
+            }
+        });
     }
 }

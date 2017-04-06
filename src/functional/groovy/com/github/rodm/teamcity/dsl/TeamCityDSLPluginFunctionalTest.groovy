@@ -127,4 +127,67 @@ class TeamCityDSLPluginFunctionalTest {
         File exceptionFile = new File(testProjectDir.root, 'build/generated-configs/dsl_exception.xml')
         assertTrue(exceptionFile.exists())
     }
+
+    @Test
+    void 'generate configuration task removes dsl exception file from previous run'() {
+        buildFile << '''
+            plugins {
+                id 'com.github.rodm.teamcity-dsl'
+            }
+
+            repositories {
+                maven {
+                    url "http://${server}:8111/app/dsl-plugins-repository"
+                }
+            }
+        '''
+
+        File projectDir = testProjectDir.newFolder('.teamcity', 'Project')
+        File settingsFile = new File(projectDir, 'settings.kts')
+        settingsFile << '''
+            package Project
+
+            import jetbrains.buildServer.configs.kotlin.v10.*
+
+            version = "10.0"
+            project {
+                extId = "Project"
+                name = "Project"
+                description = "Test project"
+            }
+        '''
+
+        GradleRunner.create()
+                .forwardOutput()
+                .withProjectDir(testProjectDir.getRoot())
+                .withArguments(['-S', 'generateConfiguration', '-Pserver=' + System.properties['teamcity.server.host']])
+                .withPluginClasspath()
+                .buildAndFail()
+
+        File exceptionFile = new File(testProjectDir.root, 'build/generated-configs/dsl_exception.xml')
+        assertTrue(exceptionFile.exists())
+
+        settingsFile.text = '''
+            package Project
+
+            import jetbrains.buildServer.configs.kotlin.v10.*
+
+            version = "10.0"
+            project {
+                uuid = "2c4c777e-8e46-4eaf-bf5d-eea999fdbd98"
+                extId = "Project"
+                name = "Project"
+                description = "Test project"
+            }
+        '''.stripIndent()
+
+        GradleRunner.create()
+                .forwardOutput()
+                .withProjectDir(testProjectDir.getRoot())
+                .withArguments(['-S', 'generateConfiguration', '-Pserver=' + System.properties['teamcity.server.host']])
+                .withPluginClasspath()
+                .build()
+
+        assertFalse(exceptionFile.exists())
+    }
 }
