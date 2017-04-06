@@ -31,6 +31,45 @@ import static org.junit.Assert.assertTrue
 
 class TeamCityDSLPluginFunctionalTest {
 
+    static final String BUILD_SCRIPT = '''
+        plugins {
+            id 'com.github.rodm.teamcity-dsl'
+        }
+
+        repositories {
+            maven {
+                url "http://${server}:8111/app/dsl-plugins-repository"
+            }
+        }
+    '''.stripIndent()
+
+    static final String VALID_SETTINGS_FILE = '''
+        package Project
+
+        import jetbrains.buildServer.configs.kotlin.v10.*
+
+        version = "10.0"
+        project {
+            uuid = "2c4c777e-8e46-4eaf-bf5d-eea999fdbd98"
+            extId = "Project"
+            name = "Project"
+            description = "Test project"
+        }
+    '''.stripIndent()
+
+    static final String INVALID_SETTINGS_FILE = '''
+        package Project
+
+        import jetbrains.buildServer.configs.kotlin.v10.*
+
+        version = "10.0"
+        project {
+            extId = "Project"
+            name = "Project"
+            description = "Test project"
+        }
+    '''.stripIndent()
+
     @Rule
     public final TemporaryFolder testProjectDir = new TemporaryFolder()
 
@@ -43,33 +82,11 @@ class TeamCityDSLPluginFunctionalTest {
 
     @Test
     void 'generate configuration of TeamCity settings'() {
-        buildFile << '''
-            plugins {
-                id 'com.github.rodm.teamcity-dsl'
-            }
-
-            repositories {
-                maven {
-                    url "http://${server}:8111/app/dsl-plugins-repository"
-                }
-            }
-        '''
+        buildFile << BUILD_SCRIPT
 
         File projectDir = testProjectDir.newFolder('.teamcity', 'Project')
         File settingsFile = new File(projectDir, 'settings.kts')
-        settingsFile << '''
-            package Project
-
-            import jetbrains.buildServer.configs.kotlin.v10.*
-
-            version = "10.0"
-            project {
-                uuid = "2c4c777e-8e46-4eaf-bf5d-eea999fdbd98"
-                extId = "Project"
-                name = "Project"
-                description = "Test project"
-            }
-        '''
+        settingsFile << VALID_SETTINGS_FILE
 
         BuildResult result = GradleRunner.create()
                 .forwardOutput()
@@ -87,32 +104,11 @@ class TeamCityDSLPluginFunctionalTest {
 
     @Test
     void 'generate configuration fails with invalid settings'() {
-        buildFile << '''
-            plugins {
-                id 'com.github.rodm.teamcity-dsl'
-            }
-
-            repositories {
-                maven {
-                    url "http://${server}:8111/app/dsl-plugins-repository"
-                }
-            }
-        '''
+        buildFile << BUILD_SCRIPT
 
         File projectDir = testProjectDir.newFolder('.teamcity', 'Project')
         File settingsFile = new File(projectDir, 'settings.kts')
-        settingsFile << '''
-            package Project
-
-            import jetbrains.buildServer.configs.kotlin.v10.*
-
-            version = "10.0"
-            project {
-                extId = "Project"
-                name = "Project"
-                description = "Test project"
-            }
-        '''
+        settingsFile << INVALID_SETTINGS_FILE
 
         BuildResult result = GradleRunner.create()
                 .forwardOutput()
@@ -130,32 +126,11 @@ class TeamCityDSLPluginFunctionalTest {
 
     @Test
     void 'generate configuration task removes dsl exception file from previous run'() {
-        buildFile << '''
-            plugins {
-                id 'com.github.rodm.teamcity-dsl'
-            }
-
-            repositories {
-                maven {
-                    url "http://${server}:8111/app/dsl-plugins-repository"
-                }
-            }
-        '''
+        buildFile << BUILD_SCRIPT
 
         File projectDir = testProjectDir.newFolder('.teamcity', 'Project')
         File settingsFile = new File(projectDir, 'settings.kts')
-        settingsFile << '''
-            package Project
-
-            import jetbrains.buildServer.configs.kotlin.v10.*
-
-            version = "10.0"
-            project {
-                extId = "Project"
-                name = "Project"
-                description = "Test project"
-            }
-        '''
+        settingsFile << INVALID_SETTINGS_FILE
 
         GradleRunner.create()
                 .forwardOutput()
@@ -167,19 +142,7 @@ class TeamCityDSLPluginFunctionalTest {
         File exceptionFile = new File(testProjectDir.root, 'build/generated-configs/dsl_exception.xml')
         assertTrue(exceptionFile.exists())
 
-        settingsFile.text = '''
-            package Project
-
-            import jetbrains.buildServer.configs.kotlin.v10.*
-
-            version = "10.0"
-            project {
-                uuid = "2c4c777e-8e46-4eaf-bf5d-eea999fdbd98"
-                extId = "Project"
-                name = "Project"
-                description = "Test project"
-            }
-        '''.stripIndent()
+        settingsFile.text = VALID_SETTINGS_FILE
 
         GradleRunner.create()
                 .forwardOutput()
