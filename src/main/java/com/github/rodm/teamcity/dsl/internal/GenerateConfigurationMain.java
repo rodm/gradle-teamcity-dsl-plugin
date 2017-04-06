@@ -68,6 +68,7 @@ public class GenerateConfigurationMain {
         catch (Exception e) {
             System.out.println("Error while generating TeamCity configs: " + e.getMessage());
             e.printStackTrace(System.out);
+            System.exit(1);
         }
     }
 

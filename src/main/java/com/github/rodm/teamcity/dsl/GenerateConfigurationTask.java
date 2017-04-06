@@ -18,6 +18,7 @@ package com.github.rodm.teamcity.dsl;
 
 import org.gradle.api.Action;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.GradleException;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.ConventionAwareHelper;
@@ -27,6 +28,7 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.process.ExecResult;
 import org.gradle.process.JavaExecSpec;
 
 import java.io.File;
@@ -55,11 +57,12 @@ public class GenerateConfigurationTask extends DefaultTask implements IConventio
 
     @TaskAction
     void generate() {
-        getProject().javaexec(new Action<JavaExecSpec>() {
+        ExecResult result = getProject().javaexec(new Action<JavaExecSpec>() {
             @Override
             public void execute(JavaExecSpec spec) {
                 Configuration configuration = getProject().getConfigurations().getAt(CONFIGURATION_NAME);
                 String toolPath = configuration.getAsPath();
+                spec.setIgnoreExitValue(true);
                 spec.setClasspath(createToolClasspath(configuration));
                 spec.setMain("com.github.rodm.teamcity.dsl.internal.GenerateConfigurationMain");
                 spec.args(getFormat(), getBaseDir().getAbsolutePath(), getDestDir().getAbsolutePath(), toolPath);
@@ -73,6 +76,9 @@ public class GenerateConfigurationTask extends DefaultTask implements IConventio
                 return getProject().files(classPath);
             }
         });
+        if (result.getExitValue() != 0) {
+            throw new GradleException("Process generating TeamCity configurations failed.");
+        }
     }
 
     @Input

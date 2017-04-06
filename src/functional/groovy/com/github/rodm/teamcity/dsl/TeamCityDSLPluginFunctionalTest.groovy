@@ -23,6 +23,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
+import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertFalse
@@ -82,5 +83,48 @@ class TeamCityDSLPluginFunctionalTest {
         assertTrue(projectFile.exists())
         File exceptionFile = new File(testProjectDir.root, 'build/generated-configs/dsl_exception.xml')
         assertFalse(exceptionFile.exists())
+    }
+
+    @Test
+    void 'generate configuration fails with invalid settings'() {
+        buildFile << '''
+            plugins {
+                id 'com.github.rodm.teamcity-dsl'
+            }
+
+            repositories {
+                maven {
+                    url "http://${server}:8111/app/dsl-plugins-repository"
+                }
+            }
+        '''
+
+        File projectDir = testProjectDir.newFolder('.teamcity', 'Project')
+        File settingsFile = new File(projectDir, 'settings.kts')
+        settingsFile << '''
+            package Project
+
+            import jetbrains.buildServer.configs.kotlin.v10.*
+
+            version = "10.0"
+            project {
+                extId = "Project"
+                name = "Project"
+                description = "Test project"
+            }
+        '''
+
+        BuildResult result = GradleRunner.create()
+                .forwardOutput()
+                .withProjectDir(testProjectDir.getRoot())
+                .withArguments(['-S', 'generateConfiguration', '-Pserver=' + System.properties['teamcity.server.host']])
+                .withPluginClasspath()
+                .buildAndFail()
+
+        assertEquals(FAILED, result.task(":generateConfiguration").getOutcome())
+        File projectFile = new File(testProjectDir.root, 'build/generated-configs/Project/project-config.xml')
+        assertFalse(projectFile.exists())
+        File exceptionFile = new File(testProjectDir.root, 'build/generated-configs/dsl_exception.xml')
+        assertTrue(exceptionFile.exists())
     }
 }
