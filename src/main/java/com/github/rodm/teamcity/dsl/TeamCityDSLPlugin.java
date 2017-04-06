@@ -37,6 +37,8 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
 
     static final String CONFIGURATION_NAME = "teamcity";
 
+    static final String DSL_EXCEPTION_FILENAME = "dsl_exception.xml";
+
     private static final String EXTENSION_NAME = "teamcityConfig";
     private static final String SOURCE_SET_NAME = "teamcity";
 
@@ -44,8 +46,6 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
     private static final String DEFAULT_FORMAT = "kotlin";
     private static final String DEFAULT_BASE_DIR = ".teamcity";
     private static final String DEFAULT_DEST_DIR = "generated-configs";
-
-    private static final String DSL_EXCEPTION_FILENAME = "dsl_exception.xml";
 
     private static final String JETBRAINS_MAVEN_REPOSITORY = "https://download.jetbrains.com/teamcity-repository";
 

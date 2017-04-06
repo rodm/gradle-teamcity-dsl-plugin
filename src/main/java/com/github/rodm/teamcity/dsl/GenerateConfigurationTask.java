@@ -32,10 +32,13 @@ import org.gradle.process.ExecResult;
 import org.gradle.process.JavaExecSpec;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.github.rodm.teamcity.dsl.TeamCityDSLPlugin.CONFIGURATION_NAME;
+import static com.github.rodm.teamcity.dsl.TeamCityDSLPlugin.DSL_EXCEPTION_FILENAME;
 
 public class GenerateConfigurationTask extends DefaultTask implements IConventionAware {
 
@@ -77,8 +80,18 @@ public class GenerateConfigurationTask extends DefaultTask implements IConventio
             }
         });
         if (result.getExitValue() != 0) {
-            throw new GradleException("Process generating TeamCity configurations failed.");
+            String message = "Process generating TeamCity configurations failed. See the report at: ";
+            String dslReportUrl = asClickableFileUrl(new File(getDestDir(), DSL_EXCEPTION_FILENAME));
+            throw new GradleException(message + dslReportUrl);
         }
+    }
+
+    private String asClickableFileUrl(File file) {
+        try {
+            return new URI("file", "", file.toURI().getPath(), null, null).toString();
+        } catch (URISyntaxException ignore) {
+        }
+        return file.getAbsolutePath();
     }
 
     @Input
