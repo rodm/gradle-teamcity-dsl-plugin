@@ -14,7 +14,7 @@ buildscript {
     }
     dependencies {
         classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.0.3'
-        classpath 'com.github.rodm:gradle-teamcity-dsl-plugin:0.4-SNAPSHOT'
+        classpath 'com.github.rodm:gradle-teamcity-dsl-plugin:0.4'
     }
 }
 
