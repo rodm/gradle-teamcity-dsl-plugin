@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.rodm.teamcity.dsl.internal;
+package com.github.rodm.teamcity.dsl.v10;
 
 import jetbrains.buildServer.configs.RawConfigsBuilder;
 import jetbrains.buildServer.configs.dsl.DslConfigGenerator;

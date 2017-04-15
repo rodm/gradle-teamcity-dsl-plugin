@@ -19,7 +19,6 @@ package com.github.rodm.teamcity.dsl;
 import org.gradle.api.Action;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
-import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.ConventionAwareHelper;
@@ -72,7 +71,7 @@ public class GenerateConfigurationTask extends DefaultTask implements IConventio
                 String toolPath = configuration.getAsPath();
                 spec.setIgnoreExitValue(true);
                 spec.setClasspath(createToolClasspath(configuration));
-                spec.setMain("com.github.rodm.teamcity.dsl.internal.GenerateConfigurationMain");
+                spec.setMain("com.github.rodm.teamcity.dsl.v10.GenerateConfigurationMain");
                 spec.args(getFormat(), getBaseDir().getAbsolutePath(), getDestDir().getAbsolutePath(), toolPath);
             }
 

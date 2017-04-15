@@ -19,11 +19,30 @@ repositories {
     }
 }
 
+sourceSets {
+    v10
+
+    main {
+        compileClasspath += v10.output
+        runtimeClasspath += v10.output
+    }
+
+    functionalTest {
+        compileClasspath += main.output + configurations.testRuntime
+        runtimeClasspath += main.output + configurations.testRuntime
+        groovy {
+            srcDir 'src/functional/groovy'
+        }
+    }
+}
+
 dependencies {
-    compileOnly('org.jetbrains.teamcity:configs-dsl-server:10.0.0') {
+    v10CompileOnly('org.jetbrains.teamcity:configs-dsl-server:10.0.0') {
         exclude module: 'groovy-all'
     }
-    compileOnly 'org.jetbrains.teamcity.internal:server:10.0'
+    v10CompileOnly 'org.jetbrains.teamcity.internal:server:10.0'
+
+    compileOnly 'org.jetbrains.teamcity.idea:annotations:132.719'
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest-library:1.3'
@@ -34,14 +53,8 @@ compileJava {
     targetCompatibility = 1.8
 }
 
-sourceSets {
-    functionalTest {
-        compileClasspath += main.output + configurations.testRuntime
-        runtimeClasspath += main.output + configurations.testRuntime
-        groovy {
-            srcDir 'src/functional/groovy'
-        }
-    }
+jar {
+    from sourceSets.v10.output
 }
 
 gradlePlugin {
