@@ -46,6 +46,8 @@ public class GenerateConfigurationTask extends DefaultTask implements IConventio
 
     private ConventionMapping conventionMapping = new ConventionAwareHelper(this, this.getProject().getConvention());
 
+    private String version;
+
     private String format;
 
     private File baseDir;
@@ -66,12 +68,13 @@ public class GenerateConfigurationTask extends DefaultTask implements IConventio
             @Override
             public void execute(JavaExecSpec spec) {
                 getLogger().lifecycle(CONFIG_MESSAGE, getFormat(), getBaseDir(), getDestDir());
+                getLogger().info("Using main class {}", getMainClass());
 
                 Configuration configuration = getProject().getConfigurations().getAt(CONFIGURATION_NAME);
                 String toolPath = configuration.getAsPath();
                 spec.setIgnoreExitValue(true);
                 spec.setClasspath(createToolClasspath(configuration));
-                spec.setMain("com.github.rodm.teamcity.dsl.v10.GenerateConfigurationMain");
+                spec.setMain(getMainClass());
                 spec.args(getFormat(), getBaseDir().getAbsolutePath(), getDestDir().getAbsolutePath(), toolPath);
             }
 
@@ -90,12 +93,29 @@ public class GenerateConfigurationTask extends DefaultTask implements IConventio
         }
     }
 
+    private String getMainClass() {
+        if (getVersion().startsWith("10.")) {
+            return com.github.rodm.teamcity.dsl.v10.GenerateConfigurationMain.class.getName();
+        } else {
+            return com.github.rodm.teamcity.dsl.v2017.GenerateConfigurationMain.class.getName();
+        }
+    }
+
     private String asClickableFileUrl(File file) {
         try {
             return new URI("file", "", file.toURI().getPath(), null, null).toString();
         } catch (URISyntaxException ignore) {
         }
         return file.getAbsolutePath();
+    }
+
+    @Input
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     @Input

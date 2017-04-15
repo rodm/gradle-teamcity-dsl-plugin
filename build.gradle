@@ -21,10 +21,11 @@ repositories {
 
 sourceSets {
     v10
+    v2017
 
     main {
-        compileClasspath += v10.output
-        runtimeClasspath += v10.output
+        compileClasspath += v10.output + v2017.output
+        runtimeClasspath += v10.output + v2017.output
     }
 
     functionalTest {
@@ -42,6 +43,11 @@ dependencies {
     }
     v10CompileOnly 'org.jetbrains.teamcity.internal:server:10.0'
 
+    v2017CompileOnly('org.jetbrains.teamcity:configs-dsl-server:2017.1') {
+        exclude module: 'groovy-all'
+    }
+    v2017CompileOnly 'org.jetbrains.teamcity.internal:server:2017.1'
+
     compileOnly 'org.jetbrains.teamcity.idea:annotations:132.719'
 
     testCompile 'junit:junit:4.12'
@@ -55,6 +61,7 @@ compileJava {
 
 jar {
     from sourceSets.v10.output
+    from sourceSets.v2017.output
 }
 
 gradlePlugin {

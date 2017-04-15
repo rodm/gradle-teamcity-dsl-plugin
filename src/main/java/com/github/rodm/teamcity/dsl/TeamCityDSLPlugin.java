@@ -109,6 +109,9 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
             dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin:" + teamcityVersion));
 
             //    compile 'org.jetbrains.teamcity:configs-dsl-kotlin-plugins:1.0-SNAPSHOT:pom'
+            if (!teamcityVersion.startsWith("10.0")) {
+                dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-converters:" + teamcityVersion));
+            }
             dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-ant:1.0-SNAPSHOT"));
             dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-bugzilla:1.0-SNAPSHOT"));
             dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-bundled:1.0-SNAPSHOT"));
@@ -135,6 +138,7 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
     private void configureTask(Project project, TeamCityDSLExtension extension) {
         GenerateConfigurationTask task = project.getTasks().create("generateConfiguration", GenerateConfigurationTask.class);
         ConventionMapping taskMapping = task.getConventionMapping();
+        taskMapping.map("version", extension::getTeamcityVersion);
         taskMapping.map("format", extension::getFormat);
         taskMapping.map("baseDir", extension::getBaseDir);
         taskMapping.map("destDir", extension::getDestDir);
