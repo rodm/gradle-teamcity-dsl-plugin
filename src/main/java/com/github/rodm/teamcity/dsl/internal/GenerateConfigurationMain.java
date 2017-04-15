@@ -58,8 +58,9 @@ public class GenerateConfigurationMain {
 
         try {
             DslConfigGenerator generator = findGenerator(format);
-            if(generator == null) {
+            if (generator == null) {
                 System.out.println("Cannot find generator for settings format '" + format + "'");
+                System.exit(1);
             } else {
                 generator.generate(new VersionedSettingsFileSystemImpl(baseDir), new RawConfigsBuilder(destDir));
             }
