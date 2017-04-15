@@ -57,7 +57,6 @@ public class GenerateConfigurationMain {
         DslGeneratorProcess.initTeamCityProperties();
 
         try {
-            System.out.println("Generate TeamCity configs in " + destDir.getCanonicalPath() + ", format " + format + ", dslDir: " + baseDir.getCanonicalPath());
             DslConfigGenerator generator = findGenerator(format);
             if(generator == null) {
                 System.out.println("Cannot find generator for settings format '" + format + "'");

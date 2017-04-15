@@ -19,6 +19,7 @@ package com.github.rodm.teamcity.dsl;
 import org.gradle.api.Action;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
+import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.ConventionAwareHelper;
@@ -42,6 +43,8 @@ import static com.github.rodm.teamcity.dsl.TeamCityDSLPlugin.DSL_EXCEPTION_FILEN
 
 public class GenerateConfigurationTask extends DefaultTask implements IConventionAware {
 
+    private static final String CONFIG_MESSAGE = "Generate TeamCity configurations in {} format from {} to {}";
+
     private ConventionMapping conventionMapping = new ConventionAwareHelper(this, this.getProject().getConvention());
 
     private String format;
@@ -63,6 +66,8 @@ public class GenerateConfigurationTask extends DefaultTask implements IConventio
         ExecResult result = getProject().javaexec(new Action<JavaExecSpec>() {
             @Override
             public void execute(JavaExecSpec spec) {
+                getLogger().lifecycle(CONFIG_MESSAGE, getFormat(), getBaseDir(), getDestDir());
+
                 Configuration configuration = getProject().getConfigurations().getAt(CONFIGURATION_NAME);
                 String toolPath = configuration.getAsPath();
                 spec.setIgnoreExitValue(true);
