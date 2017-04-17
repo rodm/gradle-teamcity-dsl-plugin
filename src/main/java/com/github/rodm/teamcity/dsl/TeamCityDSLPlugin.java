@@ -59,6 +59,7 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
         configureSourceSet(project, configuration, extension);
         configureDefaultDependencies(project, configuration, extension);
         configureTask(project, extension);
+        configureTaskType(project);
     }
 
     @NotNull
@@ -148,5 +149,10 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
                 project.delete(new File(extension.getDestDir(), DSL_EXCEPTION_FILENAME));
             }
         });
+    }
+
+    private void configureTaskType(Project project) {
+        Class type = GenerateConfigurationTask.class;
+        project.getExtensions().getExtraProperties().set(type.getSimpleName(), type);
     }
 }

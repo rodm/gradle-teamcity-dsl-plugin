@@ -24,12 +24,14 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
+import static org.hamcrest.CoreMatchers.equalTo
 import static org.hamcrest.CoreMatchers.hasItem
+import static org.hamcrest.CoreMatchers.is
 import static org.hamcrest.Matchers.endsWith
 import static org.hamcrest.Matchers.hasSize
-import static org.hamcrest.Matchers.is
+import static org.hamcrest.MatcherAssert.assertThat
+import static org.hamcrest.Matchers.instanceOf
 import static org.junit.Assert.assertNotNull
-import static org.junit.Assert.assertThat
 import static org.junit.Assert.assertTrue
 
 class TeamCityDSLPluginTest {
@@ -128,6 +130,15 @@ class TeamCityDSLPluginTest {
         List<String> urls = project.repositories.collect { repository -> repository.url.toString() }
         assertThat(urls, hasItem('https://repo1.maven.org/maven2/'))
         assertThat(urls, hasItem('https://download.jetbrains.com/teamcity-repository'))
+    }
+
+    @Test
+    void 'make generate configuration task available to the project without importing'() {
+        project.apply plugin: 'com.github.rodm.teamcity-dsl'
+
+        def type = project.extensions.extraProperties['GenerateConfigurationTask']
+        assertThat(type, is(instanceOf(Class)))
+        assertThat(type.name, equalTo('com.github.rodm.teamcity.dsl.GenerateConfigurationTask'))
     }
 
     private static String normalizePath(File path) {
