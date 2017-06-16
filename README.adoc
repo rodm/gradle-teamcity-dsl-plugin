@@ -26,7 +26,34 @@ as follows.
         classpath "com.github.rodm:gradle-teamcity-dsl-plugin:{plugin-version}"
       }
     }
+
+    apply plugin: "com.github.rodm.teamcity-dsl"
 ----
+
+or using the `plugins` configuration block
+
+[source,groovy]
+[subs="attributes"]
+----
+    plugins {
+      id "com.github.rodm.teamcity-dsl" version "{plugin-version}"
+    }
+----
+
+The plugin requires a repository to be configured that allows the TeamCity DSL plugins to be downloaded. In example
+below the property `teamcityServer` needs to be defined with the hostname of the machine running the TeamCity Server.
+
+[source,groovy]
+[subs="attributes"]
+----
+    repositories {
+        maven {
+            url "http://${teamcityServer}:8111/app/dsl-plugins-repository"
+        }
+    }
+----
+
+NOTE: This plugin requires Java 8 and TeamCity 10.x or later
 
 ### Extension Properties
 
