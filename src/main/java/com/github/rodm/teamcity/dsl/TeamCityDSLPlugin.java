@@ -27,6 +27,7 @@ import org.gradle.api.internal.ConventionMapping;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.TaskContainer;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -141,17 +142,20 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
     }
 
     private void configureTask(Project project, TeamCityDSLExtension extension) {
-        GenerateConfigurationTask task = project.getTasks().create("generateConfiguration", GenerateConfigurationTask.class);
-        ConventionMapping taskMapping = task.getConventionMapping();
-        taskMapping.map("version", extension::getTeamcityVersion);
-        taskMapping.map("format", extension::getFormat);
-        taskMapping.map("baseDir", extension::getBaseDir);
-        taskMapping.map("destDir", extension::getDestDir);
-        task.doFirst(new Action<Task>() {
-            @Override
-            public void execute(Task task) {
-                project.delete(new File(extension.getDestDir(), DSL_EXCEPTION_FILENAME));
-            }
+        TaskContainer tasks = project.getTasks();
+        tasks.create("generateConfiguration", GenerateConfigurationTask.class);
+        tasks.withType(GenerateConfigurationTask.class, task -> {
+            ConventionMapping taskMapping = task.getConventionMapping();
+            taskMapping.map("version", extension::getTeamcityVersion);
+            taskMapping.map("format", extension::getFormat);
+            taskMapping.map("baseDir", extension::getBaseDir);
+            taskMapping.map("destDir", extension::getDestDir);
+            task.doFirst(new Action<Task>() {
+                @Override
+                public void execute(Task task) {
+                    project.delete(new File(extension.getDestDir(), DSL_EXCEPTION_FILENAME));
+                }
+            });
         });
     }
 

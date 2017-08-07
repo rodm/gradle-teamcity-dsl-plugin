@@ -28,6 +28,7 @@ import static org.hamcrest.CoreMatchers.equalTo
 import static org.hamcrest.CoreMatchers.hasItem
 import static org.hamcrest.CoreMatchers.is
 import static org.hamcrest.Matchers.endsWith
+import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.hasSize
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.instanceOf
@@ -139,6 +140,56 @@ class TeamCityDSLPluginTest {
         def type = project.extensions.extraProperties['GenerateConfigurationTask']
         assertThat(type, is(instanceOf(Class)))
         assertThat(type.name, equalTo('com.github.rodm.teamcity.dsl.GenerateConfigurationTask'))
+    }
+
+    @Test
+    void 'additional generate configuration task uses defaults'() {
+        project.apply plugin: 'com.github.rodm.teamcity-dsl'
+//        project.teamcityConfig {
+//            teamcityVersion = '2017.1'
+//            baseDir = project.file('src/test/teamcity')
+//            destDir = project.file('data/10.0/config/projects')
+//        }
+        project.tasks.create('additionalGenerateConfiguration', GenerateConfigurationTask)
+//                task generateProject1(type: GenerateConfigurationTask) {
+//            baseDir = project.file("$projectDir/src/teamcity/project1")
+//            destDir = project.file("$projectDir/data/10.0/config/projects/")
+//        }
+
+        GenerateConfigurationTask task = project.tasks.findByName('additionalGenerateConfiguration') as GenerateConfigurationTask
+        assertThat(task.version, equalTo('10.0.5'))
+        assertThat(task.format, equalTo('kotlin'))
+        assertThat(normalizePath(task.baseDir), endsWith('/.teamcity'))
+        assertThat(normalizePath(task.destDir), endsWith('/build/generated-configs'))
+    }
+
+    @Test
+    void 'additional generate configuration task uses modified configuration'() {
+        project.apply plugin: 'com.github.rodm.teamcity-dsl'
+        project.teamcityConfig {
+            teamcityVersion = '2017.1'
+            baseDir = project.file('src/test/teamcity')
+            destDir = project.file('data/2017.1/config/projects')
+        }
+        project.tasks.create('additionalGenerateConfiguration', GenerateConfigurationTask)
+
+        GenerateConfigurationTask task = project.tasks.findByName('additionalGenerateConfiguration') as GenerateConfigurationTask
+        assertThat(task.version, equalTo ('2017.1'))
+        assertThat(normalizePath(task.baseDir), endsWith('/src/test/teamcity'))
+        assertThat(normalizePath(task.destDir), endsWith('/data/2017.1/config/projects'))
+    }
+
+    @Test
+    void 'additional generate configuration task overrides default configuration'() {
+        project.apply plugin: 'com.github.rodm.teamcity-dsl'
+        project.tasks.create('additionalGenerateConfiguration', GenerateConfigurationTask) {
+            baseDir = project.file('src/test/teamcity')
+            destDir = project.file('data/10.0/config/projects')
+        }
+
+        GenerateConfigurationTask task = project.tasks.findByName('additionalGenerateConfiguration') as GenerateConfigurationTask
+        assertThat(normalizePath(task.baseDir), endsWith('/src/test/teamcity'))
+        assertThat(normalizePath(task.destDir), endsWith('/data/10.0/config/projects'))
     }
 
     private static String normalizePath(File path) {
