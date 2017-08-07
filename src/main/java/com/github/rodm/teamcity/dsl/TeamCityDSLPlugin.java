@@ -130,7 +130,11 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
             dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-ssh-manager:1.0-SNAPSHOT"));
             dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-svn:1.0-SNAPSHOT"));
             dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-swabra:1.0-SNAPSHOT"));
-            dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-teamcity-powershell:1.0-SNAPSHOT"));
+            if (teamcityVersion.startsWith("10.0")) {
+                dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-teamcity-powershell:1.0-SNAPSHOT"));
+            } else {
+                dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-powershell:1.0-SNAPSHOT"));
+            }
             dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-tfs:1.0-SNAPSHOT"));
             dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-visualstudiotest:1.0-SNAPSHOT"));
         });
