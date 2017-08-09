@@ -34,6 +34,8 @@ import org.gradle.process.JavaExecSpec;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,7 +69,7 @@ public class GenerateConfigurationTask extends DefaultTask implements IConventio
         ExecResult result = getProject().javaexec(new Action<JavaExecSpec>() {
             @Override
             public void execute(JavaExecSpec spec) {
-                getLogger().lifecycle(CONFIG_MESSAGE, getFormat(), getBaseDir(), getDestDir());
+                getLogger().lifecycle(CONFIG_MESSAGE, getFormat(), formatPath(getBaseDir()), formatPath(getDestDir()));
                 getLogger().info("Using main class {}", getMainClass());
 
                 Configuration configuration = getProject().getConfigurations().getAt(CONFIGURATION_NAME);
@@ -107,6 +109,16 @@ public class GenerateConfigurationTask extends DefaultTask implements IConventio
         } catch (URISyntaxException ignore) {
         }
         return file.getAbsolutePath();
+    }
+
+    private String formatPath(File dir) {
+        Path root = Paths.get(getProject().getRootDir().toURI());
+        Path path = Paths.get(dir.toURI());
+        if (path.startsWith(root)) {
+            return root.relativize(path).toString();
+        } else {
+            return path.toAbsolutePath().toString();
+        }
     }
 
     @Input
