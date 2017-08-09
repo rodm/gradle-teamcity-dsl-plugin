@@ -1,7 +1,7 @@
 = Gradle TeamCity DSL plugin
 :uri-teamcity-documentation: https://confluence.jetbrains.com/display/TCD10
 :uri-gradle-plugin-portal: https://plugins.gradle.org/plugin/com.github.rodm.teamcity-dsl
-:plugin-version: 0.5
+:plugin-version: 0.6
 
 The plugin provides a task to generate TeamCity settings in XML format from a Kotlin DSL.
 
