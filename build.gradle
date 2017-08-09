@@ -6,7 +6,7 @@ plugins {
     id 'maven-publish'
     id 'org.gradle.jacoco'
     id 'com.gradle.plugin-publish' version '0.9.7'
-    id "org.sonarqube" version "2.3"
+    id 'org.sonarqube' version '2.5'
 }
 
 version = '0.6-SNAPSHOT'
