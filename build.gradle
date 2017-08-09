@@ -68,7 +68,13 @@ gradlePlugin {
     testSourceSets sourceSets.functionalTest
 }
 
-task functionalTest(type: Test) {
+task copyClasses(type: Copy) {
+    into ("${buildDir}/classes/main")
+    from sourceSets.v10.output
+    from sourceSets.v2017.output
+}
+
+task functionalTest(type: Test, dependsOn: copyClasses) {
     description = 'Runs the functional tests.'
     group = 'verification'
     testClassesDir = sourceSets.functionalTest.output.classesDir
