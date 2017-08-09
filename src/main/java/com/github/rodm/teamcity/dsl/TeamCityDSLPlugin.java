@@ -101,10 +101,11 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
 
     private void configureDefaultDependencies(Project project, Configuration configuration, TeamCityDSLExtension extension) {
         configuration.defaultDependencies(dependencies -> {
-            DependencyHandler handler = project.getDependencies();
-            dependencies.add(handler.create("org.jetbrains.kotlin:kotlin-stdlib:1.0.3"));
-            dependencies.add(handler.create("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.0.3"));
             String teamcityVersion = extension.getTeamcityVersion();
+            String kotlinVersion = teamcityVersion.startsWith("10.0") ? "1.0.3" : "1.1.2";
+            DependencyHandler handler = project.getDependencies();
+            dependencies.add(handler.create("org.jetbrains.kotlin:kotlin-stdlib:" + kotlinVersion));
+            dependencies.add(handler.create("org.jetbrains.kotlin:kotlin-compiler-embeddable:" + kotlinVersion));
             dependencies.add(handler.create("org.jetbrains.teamcity:server-api:" + teamcityVersion));
             dependencies.add(handler.create("org.jetbrains.teamcity.internal:server:" + teamcityVersion));
             dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-server:" + teamcityVersion));
