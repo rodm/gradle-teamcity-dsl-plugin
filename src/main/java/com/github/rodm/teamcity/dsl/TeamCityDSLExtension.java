@@ -16,47 +16,74 @@
 
 package com.github.rodm.teamcity.dsl;
 
+import org.gradle.api.Project;
+import org.gradle.api.provider.PropertyState;
+import org.gradle.api.provider.Provider;
+
 import java.io.File;
 
 public class TeamCityDSLExtension {
 
-    private String teamcityVersion;
+    private PropertyState<String> teamcityVersion;
 
-    private String format;
+    private PropertyState<String> format;
 
-    private File baseDir;
+    private PropertyState<File> baseDir;
 
-    private File destDir;
+    private PropertyState<File> destDir;
+
+    public TeamCityDSLExtension(Project project) {
+        teamcityVersion = project.property(String.class);
+        format = project.property(String.class);
+        baseDir = project.property(File.class);
+        destDir = project.property(File.class);
+    }
 
     public String getTeamcityVersion() {
+        return teamcityVersion.get();
+    }
+
+    public Provider<String> getTeamcityVersionProvider() {
         return teamcityVersion;
     }
 
     public void setTeamcityVersion(String teamcityVersion) {
-        this.teamcityVersion = teamcityVersion;
+        this.teamcityVersion.set(teamcityVersion);
     }
 
     public String getFormat() {
+        return format.get();
+    }
+
+    public Provider<String> getFormatProvider() {
         return format;
     }
 
     public void setFormat(String format) {
-        this.format = format;
+        this.format.set(format);
     }
 
     public File getBaseDir() {
+        return baseDir.get();
+    }
+
+    public Provider<File> getBaseDirProvider() {
         return baseDir;
     }
 
     public void setBaseDir(File baseDir) {
-        this.baseDir = baseDir;
+        this.baseDir.set(baseDir);
     }
 
     public File getDestDir() {
+        return destDir.get();
+    }
+
+    public Provider<File> getDestDirProvider() {
         return destDir;
     }
 
     public void setDestDir(File destDir) {
-        this.destDir = destDir;
+        this.destDir.set(destDir);
     }
 }

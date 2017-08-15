@@ -23,7 +23,6 @@ import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
-import org.gradle.api.internal.ConventionMapping;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
@@ -65,7 +64,7 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
 
     @NotNull
     private TeamCityDSLExtension createExtension(Project project) {
-        TeamCityDSLExtension extension = project.getExtensions().create(EXTENSION_NAME, TeamCityDSLExtension.class);
+        TeamCityDSLExtension extension = project.getExtensions().create(EXTENSION_NAME, TeamCityDSLExtension.class, project);
         extension.setTeamcityVersion(DEFAULT_TEAMCITY_VERSION);
         extension.setFormat(DEFAULT_FORMAT);
         extension.setBaseDir(new File(project.getRootDir(), DEFAULT_BASE_DIR));
@@ -146,11 +145,10 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
         TaskContainer tasks = project.getTasks();
         tasks.create("generateConfiguration", GenerateConfigurationTask.class);
         tasks.withType(GenerateConfigurationTask.class, task -> {
-            ConventionMapping taskMapping = task.getConventionMapping();
-            taskMapping.map("version", extension::getTeamcityVersion);
-            taskMapping.map("format", extension::getFormat);
-            taskMapping.map("baseDir", extension::getBaseDir);
-            taskMapping.map("destDir", extension::getDestDir);
+            task.setVersion(extension.getTeamcityVersionProvider());
+            task.setFormat(extension.getFormatProvider());
+            task.setBaseDir(extension.getBaseDirProvider());
+            task.setDestDir(extension.getDestDirProvider());
             task.doFirst(new Action<Task>() {
                 @Override
                 public void execute(Task task) {

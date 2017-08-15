@@ -21,9 +21,8 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.file.FileCollection;
-import org.gradle.api.internal.ConventionAwareHelper;
-import org.gradle.api.internal.ConventionMapping;
-import org.gradle.api.internal.IConventionAware;
+import org.gradle.api.provider.PropertyState;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.OutputDirectory;
@@ -42,26 +41,20 @@ import java.util.List;
 import static com.github.rodm.teamcity.dsl.TeamCityDSLPlugin.CONFIGURATION_NAME;
 import static com.github.rodm.teamcity.dsl.TeamCityDSLPlugin.DSL_EXCEPTION_FILENAME;
 
-public class GenerateConfigurationTask extends DefaultTask implements IConventionAware {
+public class GenerateConfigurationTask extends DefaultTask {
 
     private static final String CONFIG_MESSAGE = "Generate TeamCity configurations in {} format from {} to {}";
 
-    private ConventionMapping conventionMapping = new ConventionAwareHelper(this, this.getProject().getConvention());
+    private PropertyState<String> version = getProject().property(String.class);
 
-    private String version;
+    private PropertyState<String> format = getProject().property(String.class);
 
-    private String format;
+    private PropertyState<File> baseDir = getProject().property(File.class);
 
-    private File baseDir;
-
-    private File destDir;
+    private PropertyState<File> destDir = getProject().property(File.class);
 
     public GenerateConfigurationTask() {
         setGroup("TeamCity");
-    }
-
-    public ConventionMapping getConventionMapping() {
-        return this.conventionMapping;
     }
 
     @TaskAction
@@ -123,37 +116,53 @@ public class GenerateConfigurationTask extends DefaultTask implements IConventio
 
     @Input
     public String getVersion() {
-        return version;
+        return version.get();
     }
 
     public void setVersion(String version) {
-        this.version = version;
+        this.version.set(version);
+    }
+
+    public void setVersion(Provider<String> version) {
+        this.version.set(version);
     }
 
     @Input
     public String getFormat() {
-        return format;
+        return format.get();
     }
 
     public void setFormat(String format) {
-        this.format = format;
+        this.format.set(format);
+    }
+
+    public void setFormat(Provider<String> format) {
+        this.format.set(format);
     }
 
     @InputDirectory
     public File getBaseDir() {
-        return baseDir;
+        return baseDir.get();
     }
 
     public void setBaseDir(File baseDir) {
-        this.baseDir = baseDir;
+        this.baseDir.set(baseDir);
+    }
+
+    public void setBaseDir(Provider<File> baseDir) {
+        this.baseDir.set(baseDir);
     }
 
     @OutputDirectory
     public File getDestDir() {
-        return destDir;
+        return destDir.get();
     }
 
     public void setDestDir(File destDir) {
-        this.destDir = destDir;
+        this.destDir.set(destDir);
+    }
+
+    public void setDestDir(Provider<File> destDir) {
+        this.destDir.set(destDir);
     }
 }
