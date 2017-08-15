@@ -24,7 +24,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
-import static org.hamcrest.CoreMatchers.equalTo
 import static org.hamcrest.CoreMatchers.hasItem
 import static org.hamcrest.CoreMatchers.is
 import static org.hamcrest.Matchers.endsWith
@@ -145,16 +144,7 @@ class TeamCityDSLPluginTest {
     @Test
     void 'additional generate configuration task uses defaults'() {
         project.apply plugin: 'com.github.rodm.teamcity-dsl'
-//        project.teamcityConfig {
-//            teamcityVersion = '2017.1'
-//            baseDir = project.file('src/test/teamcity')
-//            destDir = project.file('data/10.0/config/projects')
-//        }
         project.tasks.create('additionalGenerateConfiguration', GenerateConfigurationTask)
-//                task generateProject1(type: GenerateConfigurationTask) {
-//            baseDir = project.file("$projectDir/src/teamcity/project1")
-//            destDir = project.file("$projectDir/data/10.0/config/projects/")
-//        }
 
         GenerateConfigurationTask task = project.tasks.findByName('additionalGenerateConfiguration') as GenerateConfigurationTask
         assertThat(task.version, equalTo('10.0.5'))
