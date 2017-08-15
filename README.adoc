@@ -53,7 +53,7 @@ below the property `teamcityServer` needs to be defined with the hostname of the
     }
 ----
 
-NOTE: This plugin requires Java 8 and TeamCity 10.x or later
+*This plugin requires Java 8, Gradle 4.0 and TeamCity 10.x or later*
 
 ### Extension Properties
 
