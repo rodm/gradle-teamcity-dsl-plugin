@@ -120,7 +120,7 @@ public class GenerateConfigurationTask extends DefaultTask {
     }
 
     public void setVersion(String version) {
-        this.version.set(version);
+        getLogger().warn("Setting the version per task is not supported.");
     }
 
     public void setVersion(Provider<String> version) {
