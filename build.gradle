@@ -69,7 +69,7 @@ gradlePlugin {
 }
 
 task copyClasses(type: Copy) {
-    into ("${buildDir}/classes/main")
+    into ("${buildDir}/classes/java/main")
     from sourceSets.v10.output
     from sourceSets.v2017.output
 }
@@ -77,7 +77,7 @@ task copyClasses(type: Copy) {
 task functionalTest(type: Test, dependsOn: copyClasses) {
     description = 'Runs the functional tests.'
     group = 'verification'
-    testClassesDir = sourceSets.functionalTest.output.classesDir
+    testClassesDirs = sourceSets.functionalTest.output.classesDirs
     classpath = sourceSets.functionalTest.runtimeClasspath
     systemProperty 'teamcity.server.host', project.findProperty('teamcity.server.host') ?: 'localhost'
 
