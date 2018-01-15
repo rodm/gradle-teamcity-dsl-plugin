@@ -36,7 +36,9 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.github.rodm.teamcity.dsl.TeamCityDSLPlugin.CONFIGURATION_NAME;
 import static com.github.rodm.teamcity.dsl.TeamCityDSLPlugin.DSL_EXCEPTION_FILENAME;
@@ -91,8 +93,10 @@ public class GenerateConfigurationTask extends DefaultTask {
     private String getMainClass() {
         if (getVersion().startsWith("10.")) {
             return com.github.rodm.teamcity.dsl.v10.GenerateConfigurationMain.class.getName();
-        } else {
+        } else if (getVersion().startsWith("2017.1")) {
             return com.github.rodm.teamcity.dsl.v2017.GenerateConfigurationMain.class.getName();
+        } else {
+            return com.github.rodm.teamcity.dsl.v2017_2.GenerateConfigurationMain.class.getName();
         }
     }
 

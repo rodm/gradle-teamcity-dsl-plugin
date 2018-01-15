@@ -22,10 +22,11 @@ repositories {
 sourceSets {
     v10
     v2017
+    v2017_2
 
     main {
-        compileClasspath += v10.output + v2017.output
-        runtimeClasspath += v10.output + v2017.output
+        compileClasspath += v10.output + v2017.output + v2017_2.output
+        runtimeClasspath += v10.output + v2017.output + v2017_2.output
     }
 
     functionalTest {
@@ -48,6 +49,11 @@ dependencies {
     }
     v2017CompileOnly 'org.jetbrains.teamcity.internal:server:2017.1'
 
+    v2017_2CompileOnly('org.jetbrains.teamcity:configs-dsl-server:2017.2') {
+        exclude module: 'groovy-all'
+    }
+    v2017_2CompileOnly 'org.jetbrains.teamcity.internal:server:2017.2'
+
     compileOnly 'org.jetbrains.teamcity.idea:annotations:132.719'
 
     testCompile 'junit:junit:4.12'
@@ -62,6 +68,7 @@ compileJava {
 jar {
     from sourceSets.v10.output
     from sourceSets.v2017.output
+    from sourceSets.v2017_2.output
 }
 
 gradlePlugin {
@@ -72,6 +79,7 @@ task copyClasses(type: Copy) {
     into ("${buildDir}/classes/java/main")
     from sourceSets.v10.output
     from sourceSets.v2017.output
+    from sourceSets.v2017_2.output
 }
 
 task functionalTest(type: Test, dependsOn: copyClasses) {

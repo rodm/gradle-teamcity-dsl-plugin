@@ -101,10 +101,17 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
     private void configureDefaultDependencies(Project project, Configuration configuration, TeamCityDSLExtension extension) {
         configuration.defaultDependencies(dependencies -> {
             String teamcityVersion = extension.getTeamcityVersion();
-            String kotlinVersion = teamcityVersion.startsWith("10.0") ? "1.0.3" : "1.1.2";
+            String kotlinVersion = getKotlinVersion(teamcityVersion);
             DependencyHandler handler = project.getDependencies();
             dependencies.add(handler.create("org.jetbrains.kotlin:kotlin-stdlib:" + kotlinVersion));
             dependencies.add(handler.create("org.jetbrains.kotlin:kotlin-compiler-embeddable:" + kotlinVersion));
+            if (teamcityVersion.startsWith("2017")) {
+                dependencies.add(handler.create("org.jetbrains.kotlin:kotlin-script-runtime:" + kotlinVersion));
+            }
+            if (teamcityVersion.startsWith("2017.2")) {
+                dependencies.add(handler.create("org.jetbrains.kotlin:kotlin-reflect:" + kotlinVersion));
+                dependencies.add(handler.create("org.jetbrains.kotlin:kotlin-runtime:" + kotlinVersion));
+            }
             dependencies.add(handler.create("org.jetbrains.teamcity:server-api:" + teamcityVersion));
             dependencies.add(handler.create("org.jetbrains.teamcity.internal:server:" + teamcityVersion));
             dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-server:" + teamcityVersion));
@@ -120,6 +127,10 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
             dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-charisma:1.0-SNAPSHOT"));
             dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-commandLineRunner:1.0-SNAPSHOT"));
             dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-commit-status-publisher:1.0-SNAPSHOT"));
+            if (teamcityVersion.startsWith("2017.2")) {
+                dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-docker-support:1.0-SNAPSHOT"));
+                dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-dotnet.cli:1.0-SNAPSHOT"));
+            }
             dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-dotNetRunners:1.0-SNAPSHOT"));
             dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-file-content-replacer:1.0-SNAPSHOT"));
             dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-gradle:1.0-SNAPSHOT"));
@@ -139,6 +150,16 @@ public class TeamCityDSLPlugin implements Plugin<Project> {
             dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-tfs:1.0-SNAPSHOT"));
             dependencies.add(handler.create("org.jetbrains.teamcity:configs-dsl-kotlin-visualstudiotest:1.0-SNAPSHOT"));
         });
+    }
+
+    private String getKotlinVersion(String teamcityVersion) {
+        if (teamcityVersion.startsWith("10.0")) {
+            return "1.0.3";
+        } else if (teamcityVersion.startsWith("2017.1")) {
+            return "1.1.2";
+        } else {
+            return "1.1.4-3";
+        }
     }
 
     private void configureTask(Project project, TeamCityDSLExtension extension) {
