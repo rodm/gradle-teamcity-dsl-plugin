@@ -15,7 +15,7 @@ group = 'com.github.rodm'
 repositories {
     mavenCentral()
     maven {
-        url = 'http://download.jetbrains.com/teamcity-repository'
+        url = 'https://download.jetbrains.com/teamcity-repository'
     }
 }
 
